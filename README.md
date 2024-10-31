@@ -1,6 +1,6 @@
 # School Management System
 
-A Spring Boot REST API for managing students, courses, and lectures. This project includes endpoints to retrieve students, courses, and lectures, along with student enrollment and course scheduling.
+A Spring Boot REST API for managing students, courses, and lectures. This project includes endpoints to retrieve students, courses, and lectures, along with student enrollment.
 
 ## Table of Contents
 - [Features](#features)
@@ -15,8 +15,6 @@ A Spring Boot REST API for managing students, courses, and lectures. This projec
 ## Features
 
 - **Student Management**: Add, edit, and retrieve student details.
-- **Course Management**: Manage courses, including hours, maximum enrollment, and student lists.
-- **Lecture Management**: Schedule lectures, link lectures to courses, and assign lecturers.
 - **Reports**: Retrieve courses with student counts and lectures.
 
 ## Technologies

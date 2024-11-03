@@ -38,6 +38,15 @@ In this project, native SQL queries are used in certain cases instead of standar
 
 While JPA is used for basic CRUD operations and simpler queries, native SQL queries help handle more advanced data retrieval requirements efficiently.
 
+## API Documentation
+
+This project uses **Swagger UI** (powered by Springdoc OpenAPI) for API documentation. Once the application is running, you can access the Swagger UI at:
+
+- **Swagger UI**: `http://localhost:8080/api/v1/swagger-ui.html`
+- **OpenAPI JSON**: `http://localhost:8080/api/v1/v3/api-docs`
+
+Swagger UI provides an interactive interface for exploring and testing the available API endpoints.
+
 
 ## Getting Started
 

@@ -9,7 +9,6 @@ import com.acum.schoolmanagement.entity.Course;
 import com.acum.schoolmanagement.entity.Student;
 import com.acum.schoolmanagement.repository.CourseRepository;
 import com.acum.schoolmanagement.repository.StudentRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

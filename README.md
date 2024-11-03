@@ -6,6 +6,7 @@ A Spring Boot REST API for managing students, courses, and lectures. This projec
 - [Features](#features)
 - [Technologies](#technologies)
 - [Design Decisions](#design-decisions)
+- [API Documentation](#api-documentation)
 - [Getting Started](#getting-started)
 - [Database](#database)
 - [Endpoints](#endpoints)
@@ -70,7 +71,7 @@ Swagger UI provides an interactive interface for exploring and testing the avail
    ```
    The API will be available at `http://localhost:8080`.
 
-### Database
+## Database
 The application uses an in-memory H2 database by default. You can access the H2 console at `http://localhost:8080/api/v1/h2-console` with the following credentials:
 - **JDBC URL**: `jdbc:h2:mem:testdb`
 - **Username**: `sa`
@@ -108,12 +109,59 @@ POST /api/v1/students
 }
 ```
 
-#### Get a Course with Student Count
+#### Get All Courses with Students Count
 
 **Request:**
 ```http
 GET /api/v1/courses
 ```
+
+**Example:**
+```http
+GET /api/v1/courses/1
+```
+
+#### Get a Student by ID (with Enrolled Courses)
+
+**Request:**
+```http
+GET /api/v1/students/{id}
+```
+
+**Example:**
+```http
+GET /api/v1/students/1
+```
+
+#### Update a Student (Partial Update)
+
+**Request:**
+```http
+PUT /api/v1/students/{id}
+```
+
+**Body (Partial Update Example):**
+```json
+{
+    "firstName": "John Updated",
+    "email": "john.updated@example.com",
+    "courseIds": [1, 3]
+}
+```
+
+In this case, only `firstName`, `email`, and `courseIds` will be updated. Fields that are not provided in the request (e.g., `lastName` and `fieldOfStudy`) will remain unchanged.
+
+#### Get All Students
+
+**Request:**
+```http
+GET /api/v1/students
+```
+
+### Additional Notes
+- **Course Validation**: When updating a student's courses, the provided `courseIds` must be valid (i.e., they must refer to existing courses).
+- **Partial Updates**: For the `PUT` request, only the fields provided in the request body will be updated, while others will remain unchanged.
+
 
 ## Running Tests
 

@@ -1,8 +1,10 @@
 package com.acum.schoolmanagement.service;
 
+import com.acum.schoolmanagement.advice.ResourceNotFoundException;
 import com.acum.schoolmanagement.dto.CourseDto;
 import com.acum.schoolmanagement.dto.CreateStudentDto;
 import com.acum.schoolmanagement.dto.StudentDto;
+import com.acum.schoolmanagement.dto.UpdateStudentDto;
 import com.acum.schoolmanagement.entity.Course;
 import com.acum.schoolmanagement.entity.Student;
 import com.acum.schoolmanagement.repository.CourseRepository;
@@ -22,10 +24,12 @@ public class StudentService {
     private final CourseRepository courseRepository;
 
     // Fetch student by id with courses
-    public Optional<StudentDto> getStudentById(Long id) {
+    public StudentDto getStudentById(Long id) {
         List<Object[]> results = studentRepository.findByIdWithCoursesNative(id);
 
-        if (results.isEmpty()) return Optional.empty();
+        if (results.isEmpty()) {
+            throw new ResourceNotFoundException("Student with ID " + id + " not found");
+        }
 
         Object[] firstRow = results.get(0);
         StudentDto studentDto = new StudentDto(
@@ -50,7 +54,7 @@ public class StudentService {
             }
         }
 
-        return Optional.of(studentDto);
+        return studentDto;
     }
 
     // Add new student
@@ -74,24 +78,43 @@ public class StudentService {
     }
 
     // Edit student information
-    @Transactional
-    public Student updateStudent(Long id, CreateStudentDto createStudentDto) {
-        Optional<StudentDto> studentOpt = getStudentById(id);
-        if (studentOpt.isEmpty()) {
-            throw new EntityNotFoundException("Student with ID " + id + " not found");
+    @Transactional  
+    public Student updateStudent(Long id, UpdateStudentDto updateStudentDto) {
+        // Retrieve the existing student from the database
+        Student existingStudent = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student with ID " + id + " not found"));
+
+        // Update fields only if they are present in the request
+        if (updateStudentDto.getFirstName() != null) {
+            existingStudent.setFirstName(updateStudentDto.getFirstName());
+        }
+        if (updateStudentDto.getLastName() != null) {
+            existingStudent.setLastName(updateStudentDto.getLastName());
+        }
+        if (updateStudentDto.getEmail() != null) {
+            existingStudent.setEmail(updateStudentDto.getEmail());
+        }
+        if (updateStudentDto.getFieldOfStudy() != null) {
+            existingStudent.setFieldOfStudy(updateStudentDto.getFieldOfStudy());
         }
 
-        Student student = convertStudentDtoToStudentEntity(createStudentDto);
-        student.setId(id);
+        // Handle course updates
+        if (updateStudentDto.getCourseIds() != null && !updateStudentDto.getCourseIds().isEmpty()) {
+            List<Course> newCourses = courseRepository.findAllById(updateStudentDto.getCourseIds());
 
-        studentRepository.deleteCoursesByStudentId(id);
+            if (newCourses.size() == updateStudentDto.getCourseIds().size()) {
+                // Only update courses if all course IDs are valid
+                studentRepository.deleteCoursesByStudentId(id);
+                existingStudent.setCourses(new HashSet<>(newCourses));
+            } else {
+                throw new IllegalArgumentException("One or more provided course IDs are invalid.");
+            }
+        }
 
-        // Load Courses by ID from updated DTO
-        List<Course> courses = courseRepository.findAllById(createStudentDto.getCourseIds());
-        student.setCourses(new HashSet<>(courses));
-
-        return studentRepository.save(student);
+        // Save and return the updated student entity
+        return studentRepository.save(existingStudent);
     }
+
 
     private static Student convertStudentDtoToStudentEntity(CreateStudentDto createStudentDto) {
         // Convert CreateStudentDto to Student entity

@@ -98,7 +98,7 @@ Data is initialized with `data.sql` to provide sample records for students, cour
 POST /api/v1/students
 ```
 
-**Body:**
+**Body Example:**
 ```json
 {
     "firstName": "Alice",
@@ -118,7 +118,7 @@ GET /api/v1/courses
 
 **Example:**
 ```http
-GET /api/v1/courses/1
+GET /api/v1/courses
 ```
 
 #### Get a Student by ID (with Enrolled Courses)
